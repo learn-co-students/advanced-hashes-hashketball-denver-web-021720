@@ -83,16 +83,59 @@ data = game_hash
 end
 
 
-def team_names(player)
-
+def team_names()
+  data = game_hash
+  team_names = [data[:home][:team_name],data[:away][:team_name]]
+  return team_names
 
 end
 
 
-def player_numbers(player)
-  return playerParamater(:number,player)
+def player_numbers(team)
+  data = game_hash
+  if team == "Brooklyn Nets"
+    return data [:home][:players][:number]
+  else
+    return data [:away][:players][:number]
+  end
 end
 
-def player_stats
+def player_stats(player)
+  syms=[:number,:shoe,:points,:rebounds,:steals,:assists,:blocks,:slam_dunks]
+  playerStats={}
+  i=0
+  #binding.pry
+  while i<syms.length
+    playerStats[syms[i]]=playerParamater(syms[i],player)
+    i=i+1
+  end
+  return playerStats
+end
 
+
+def big_shoe_rebounds()
+  data = game_hash()
+  playersHome = data[:home][:players][:rebounds]
+  playersAway = data[:away][:players][:rebounds]
+  numbersHome = data[:home][:players][:shoe]
+  numbersAway = data[:away][:players][:shoe]
+#binding.pry
+  allPlayers = playersHome.concat(playersAway)
+  allNumbers = numbersHome.concat(numbersAway)
+  index = allNumbers.index(allNumbers.max)
+  return allPlayers[index]
+end
+
+def most_points_scored()
+  data = game_hash()
+  playersHome = data[:home][:players][:player_name]
+  playersAway = data[:away][:players][:player_name]
+  numbersHome = data[:home][:players][:points]
+  numbersAway = data[:away][:players][:points]
+#binding.pry
+  allPlayers = playersHome.concat(playersAway)
+  
+  allNumbers = numbersHome.concat(numbersAway)
+  index = allNumbers.index(allNumbers.max)
+  return allPlayers[index]
 end
