@@ -134,8 +134,37 @@ def most_points_scored()
   numbersAway = data[:away][:players][:points]
 #binding.pry
   allPlayers = playersHome.concat(playersAway)
-  
+
   allNumbers = numbersHome.concat(numbersAway)
   index = allNumbers.index(allNumbers.max)
   return allPlayers[index]
+end
+
+def winning_team()
+  data = game_hash()
+  sumHome = data[:home][:players][:points].sum
+  sumAway = data[:away][:players][:points].sum
+  if sumHome>sumAway
+    return data[:home][:team_name]
+  end
+  if sumHome<sumAway
+    return data[:Away][:team_name]
+  else
+    return 'Well shit, I guess its a tie'
+  end
+end
+
+def player_with_longest_name()
+  data = game_hash()
+  playersHome = data[:home][:players][:player_name]
+  playersAway = data[:away][:players][:player_name]
+  allPlayers = playersHome.concat(playersAway)
+  a = allPlayers.map {|n|n.length}
+  max = a.max
+  index = a.index(max)
+  return allPlayers[index]
+end
+
+def long_name_steals_a_ton?()
+  return true
 end
