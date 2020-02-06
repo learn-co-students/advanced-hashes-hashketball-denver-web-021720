@@ -1,3 +1,5 @@
+require 'pry'
+
 def game_hash
     {
       away: { team_name: 'Charlotte Hornets',
@@ -100,3 +102,162 @@ def game_hash
               ] }
     }
   end
+  
+  def num_points_scored(players_name)
+    #return num of points for player passed in 
+    game_hash.each do |place, team|
+      team.each do |attribute, data|
+        if attribute == :players
+          data.each do |player|
+            if player[:player_name] == players_name
+              return player[:points]
+            end
+          end
+        end
+      end
+    end
+  end
+  
+  #not DRY 
+  def shoe_size(players_name)
+    #return shoe size for player passed in 
+    game_hash.each do |place, team|
+      team.each do |attribute, data|
+        if attribute == :players
+          data.each do |player|
+            if player[:player_name] == players_name
+              return player[:shoe]
+            end
+          end
+        end
+      end
+    end
+  end
+  
+  def team_colors(team_name)
+    game_hash.each do |place, team|
+      if team[:team_name] == team_name
+        return team[:colors]
+      end
+      #binding.pry
+    end
+  end
+  
+  def team_names
+    game_hash.map do |place, team| #used map to return NEW array 
+      team[:team_name]
+    end
+  end
+  
+  def player_numbers(team_name)
+    nums = []
+    #returns array of jersey numbers for that team
+    game_hash.map do |place, team|
+      if team[:team_name] == team_name
+        team.each do |attribute, data|
+          if attribute == :players
+            data.each do |player|
+              nums << player[:number]
+            end
+          end
+        end
+      end
+    end
+    nums
+  end
+  
+  def player_stats(players_name)
+    new_hash = {}
+    game_hash.each do |place, team|
+      team.each do |attributes, data|
+        if attributes == :players 
+          data.each do |player|
+            if player[:player_name] == players_name
+              new_hash = player.delete_if do |k, v|
+                k == :player_name
+              end
+            end
+          end
+        end
+      end
+    end
+    new_hash
+  end
+  
+def big_shoe_rebounds
+  biggest_shoe = 0
+  num_rebounds = 0
+
+  game_hash.each do |_team, game_data|
+    game_data[:players].each do |player|
+      if player[:shoe] > biggest_shoe
+        biggest_shoe = player[:shoe]
+        num_rebounds = player[:rebounds]
+      end
+    end
+  end
+
+  num_rebounds
+end
+  
+#Adding helper methods I could use to DRY up my code 
+
+def iterate_through_players_for(name, statistic)
+  game_hash.each do |_team, game_data|
+    game_data[:players].each do |player|
+      return player[statistic] if player[:player_name] == name
+    end
+  end
+end
+
+def player_with_most_of(statistic)
+  player_name = nil
+  amount_of_stat = 0
+
+  game_hash.each do |_team, game_data|
+    game_data[:players].each do |player|
+      if player[statistic].is_a? String
+        if player[statistic].length > amount_of_stat
+          amount_of_stat = player[statistic].length
+          player_name = player[:player_name]
+        end
+      elsif player[statistic] > amount_of_stat
+        amount_of_stat = player[statistic]
+        player_name = player[:player_name]
+      end
+    end
+  end
+
+  player_name
+end
+
+def most_points_scored
+  player_with_most_of(:points)
+end
+
+def winning_team
+  # Set up a hash to keep track of the points scored by each team. This way, we
+  # can iterate through each player, get their points scored, and increase the
+  # count in the hash.
+
+  scores = { 'Brooklyn Nets' => 0, 'Charlotte Hornets' => 0 }
+
+  game_hash.each do |_team, game_data|
+    game_data[:players].each do |player|
+      scores[game_data[:team_name]] += iterate_through_players_for(player[:player_name], :points)
+    end
+  end
+
+  scores.max_by { |_k, v| v }.first
+end
+
+def player_with_longest_name
+  player_with_most_of(:player_name)
+end
+
+# # Super Bonus Question
+
+def long_name_steals_a_ton?
+  player_with_most_of(:steals) == player_with_most_of(:player_name)
+end
+  
