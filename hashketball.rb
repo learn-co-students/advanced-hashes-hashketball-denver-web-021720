@@ -151,6 +151,22 @@ def shoe_size(players_name)
  }
 end 
 
+#helper method for above 
+def player_data(players_name, sought_data)
+  game_hash.each { |place, team| 
+  team.each { |attribute, data| 
+    if attribute == :players
+      data.each { |player| 
+        if player[:player_name] == players_name
+          return player[sought_data]
+        end
+      }
+    end 
+  }
+}  
+end
+
+
 def team_colors(sought_team)
   game_hash.each { |place, team| 
     if team[:team_name] == sought_team
@@ -158,6 +174,7 @@ def team_colors(sought_team)
     end 
   }
 end 
+
 
 def team_names
   game_hash.map { |place, team| 
@@ -189,8 +206,7 @@ def player_stats(players_name)
        data.each { |player| 
          if player[:player_name] == players_name
            result = player.delete_if { |key, value|
-           key == :player_name
-           }
+           key == :player_name }
          end
        }
      end 
