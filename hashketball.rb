@@ -123,33 +123,66 @@ def game_hash
   }
 end
 
-def num_points_scored(players_name)
-  game_hash.each { |place, team| 
-   team.each { |attribute, data| 
-     if attribute == :players
-       data.each { |player| 
-         if player[:player_name] == players_name
-           return player[:points]
-         end
-       }
-     end 
-   }
- }
+# array of players helper method
+def players
+  game_hash[:away][:players].concat(game_hash[:home][:players])
+  
+end
+
+def teams
+  game_hash.values
+end
+
+def find_player (name)
+  players.find do |player|
+    player[:player_name] == name
+  end
+end
+
+def num_points_scored(name)
+  find_player(name)[:points]
 end 
 
-def shoe_size(players_name)
-   game_hash.each { |place, team| 
-   team.each { |attribute, data| 
-     if attribute == :players
-       data.each { |player| 
-         if player[:player_name] == players_name
-           return player[:shoe]
-         end
-       }
-     end 
-   }
- }
-end 
+def shoe_size(name)
+  find_player(name)[:shoe]
+end
+
+def team_colors(name)
+  teams.find do |team|
+    team[:team_name] == name
+  end[:colors]
+end
+
+
+# def num_points_scored(players_name)
+#   game_hash.each { |place, team| 
+#    team.each { |attribute, data| 
+#      if attribute == :players
+#        data.each { |player| 
+#          if player[:player_name] == players_name
+#            return player[:points]
+#          end
+#        }
+#      end 
+#    }
+#  }
+# end 
+
+
+
+# def shoe_size(players_name)
+#    game_hash.each { |place, team| 
+#    team.each { |attribute, data| 
+#      if attribute == :players
+#        data.each { |player| 
+#          if player[:player_name] == players_name
+#            return player[:shoe]
+#          end
+#        }
+#      end 
+#    }
+#  }
+# end 
 
 #helper method for above 
 def player_data(players_name, sought_data)
@@ -177,7 +210,7 @@ end
 
 
 def team_names
-  game_hash.map { |place, team| 
+  teams.map { |team| 
     team[:team_name]
   }
 end 
