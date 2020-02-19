@@ -102,38 +102,43 @@ def game_hash
               ] }
     }
   end
-  
-  def num_points_scored(players_name)
-    #return num of points for player passed in 
-    game_hash.each do |place, team|
-      team.each do |attribute, data|
-        if attribute == :players
-          data.each do |player|
-            if player[:player_name] == players_name
-              return player[:points]
-            end
+
+  #helper method
+def player_data(players_name, sought_data)
+  game_hash.each do |place, team|
+    team.each do |attribute, data|
+      if attribute == :players
+        data.each do |player|
+          if player[:player_name] == players_name
+            return player[sought_data]
           end
         end
       end
     end
+  end
+end
+  def num_points_scored(players_name)
+    #return num of points for player passed in 
+    player_data(players_name, :points)
   end
   
   #not DRY 
   def shoe_size(players_name)
     #return shoe size for player passed in 
-    game_hash.each do |place, team|
-      team.each do |attribute, data|
-        if attribute == :players
-          data.each do |player|
-            if player[:player_name] == players_name
-              return player[:shoe]
-            end
-          end
-        end
-      end
-    end
+    player_data(players_name, shoe)
+    # game_hash.each do |place, team|
+    #   team.each do |attribute, data|
+    #     if attribute == :players
+    #       data.each do |player|
+    #         if player[:player_name] == players_name
+    #           return player[:shoe]
+    #         end
+    #       end
+    #     end
+    #   end
+    # end
   end
-  
+
   def team_colors(team_name)
     game_hash.each do |place, team|
       if team[:team_name] == team_name
