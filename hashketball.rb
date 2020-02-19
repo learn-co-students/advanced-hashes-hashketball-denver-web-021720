@@ -1,5 +1,6 @@
 require "pry"
 
+# comment
 
 def game_hash
   game_hash = {
