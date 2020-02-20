@@ -188,6 +188,7 @@ def highest_statistic(stat, value_to_be_returned)
   players.each { |player|
   if player[stat].is_a? String
     if player[stat].length > high_stat
+      high_stat = player[stat].length
       return_value = player[:player_name]
     end 
   elsif player[stat] > high_stat
@@ -246,13 +247,7 @@ home_total_points > away_total_points ? home_team : away_team
 end 
 
 def player_with_longest_name
-  longest_name = ""
-  players.each { |player| 
-   if player[:player_name].length > longest_name.length
-   longest_name = player[:player_name]
-   end 
-}
-longest_name
+  highest_statistic(:player_name, :player_name)
 end 
 
 def most_steals
@@ -262,10 +257,6 @@ end
 def long_name_steals_a_ton?
   player_with_longest_name == most_steals
 end 
-
-
-binding.pry
-
 
 
 # def player_with_longest_name
