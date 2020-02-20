@@ -168,12 +168,52 @@ def player_stats(name)
 end
 
 def most_of(attribute)
-  
+  most = 0
+  player_name = ""
+  players.each do |player|
+    if player[attribute].is_a? String
+      if player[attribute].length >= most
+        most = player[attribute].length
+        player_name = player[:player_name]
+      end
+    elsif player[attribute] >= most
+      most = player[attribute]
+      player_name = player[:player_name]
+    end
+  end
+  player_name
 end
 
+def big_shoe_rebounds
+  find_player(most_of(:shoe))[:rebounds]
+end
 
+def most_points_scored
+  most_of(:points)
+end
 
-binding.pry
+def winning_team
+  total_home_points = game_hash[:home][:players].reduce(0) do |total,player|
+    total + player[:points]
+  end
+  total_away_points = game_hash[:away][:players].reduce(0) do |total,player|
+    total + player[:points]
+  end
+  total_home_points > total_away_points ? game_hash[:home][:team_name] : game_hash[:away][:team_name]
+end
+
+def player_with_longest_name
+  most_of(:player_name)
+end
+
+def player_with_longest_name
+  most_of(:player_name)
+end
+
+def long_name_steals_a_ton?
+  player_with_longest_name == most_of(:steals) ? true : false
+end
+
 
 # def num_points_scored(player)
 #   game_hash.each do |team,info|
