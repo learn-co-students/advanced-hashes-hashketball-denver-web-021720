@@ -1,5 +1,4 @@
 require 'pry'
-
 def game_hash
   {
     away: { team_name: 'Charlotte Hornets',
@@ -103,133 +102,76 @@ def game_hash
   }
 end
 
-def num_points_scored(sought_player_name)
-  game_hash.each do |_place, team|
-    team.each do |attribute, data|
-      next unless attribute == :players
-      data.each do |player|
-        return player[:points] if player[:player_name] == sought_player_name
-      end
-    end
+def home_team
+  game_hash[:home]
+end
+
+def away_team
+  game_hash[:away]
+end
+
+def players
+  home_team[:players].concat(away_team[:players])
+end
+
+def find_player player_name
+  players.find do |player|
+    player[:player_name] == player_name
   end
 end
 
-def shoe_size(sought_player_name)
-  game_hash.each do |_place, team|
-    team.each do |attribute, data|
-      next unless attribute == :players
-      data.each do |player|
-        return player[:shoe] if player[:player_name] == sought_player_name
-      end
-    end
+def all_teams
+  game_hash.values
+end
+
+def find_team team_name
+  all_teams.find do |team|
+    team[:team_name] == team_name
   end
 end
 
-def team_colors(team_name)
-  game_hash.each do |place, team|
-    return game_hash[place][:colors] if team[:team_name] == team_name
-  end
+def num_points_scored player_name
+    find_player(player_name)[:points]
+end
+
+def shoe_size player_name
+  find_player(player_name)[:shoe]
+end
+
+def team_colors team_name
+  find_team(team_name)[:colors]
 end
 
 def team_names
-  game_hash.collect do |_place, team|
+  all_teams.map do |team|
     team[:team_name]
   end
 end
 
-def player_numbers(team_name)
-  nums = []
-  game_hash.each do |_place, team|
-    next unless team[:team_name] == team_name
-    team.each do |attribute, data|
-      next unless attribute == :players
-      data.each do |data|
-        nums << data[:number]
-      end
-    end
+#Build a method, `player_numbers`, that takes in an argument of a team name and
+#returns an `Array` of the jersey numbers for that team.
+
+def player_numbers team_name
+  find_team(team_name)[:players].map do |data|
+    data[:number]
   end
-  nums
 end
 
-def player_stats(sought_player_name)
-  new_hash = {}
-  game_hash.collect do |place, team|
-    team.each do |attribute, _data|
-      next unless attribute == :players
-      game_hash[place][attribute].each do |player|
-        next unless player[:player_name] == sought_player_name
-        new_hash = player.delete_if do |k, _v|
-          k == :player_name
-        end
-      end
-    end
-  end
-  new_hash
+
+def player_stats player_name
+  player = find_player(player_name)
+  wo_player = player.delete(:player_name)
+  return player
 end
 
 def big_shoe_rebounds
   biggest_shoe = 0
-  num_rebounds = 0
-  game_hash.each do |_team, game_data|
-    game_data[:players].each do |player|
-      if player[:shoe] > biggest_shoe
-        biggest_shoe = player[:shoe]
-        num_rebounds = player[:rebounds]
-      end
+  rebounds = 0
+  players.map do |player|
+    if player[:shoe] > biggest_shoe
+      biggest_shoe = player[:shoe]
+      rebounds = player[:rebounds]
     end
   end
-  num_rebounds
-end
-
-# # Bonus Questions
-def iterate_through_players_for(name, statistic)
-  game_hash.each do |_team, game_data|
-    game_data[:players].each do |player|
-      return player[statistic] if player[:player_name] == name
-    end
-  end
-end
-
-def player_with_most_of(statistic)
-  player_name = nil
-  amount_of_stat = 0
-
-  game_hash.each do |_team, game_data|
-    game_data[:players].each do |player|
-      if player[statistic].is_a? String
-        if player[statistic].length > amount_of_stat
-          amount_of_stat = player[statistic].length
-          player_name = player[:player_name]
-        end
-      elsif player[statistic] > amount_of_stat
-        amount_of_stat = player[statistic]
-        player_name = player[:player_name]
-      end
-    end
-  end
-
-  player_name
-end
-
-def most_points_scored
-  player_with_most_of(:points)
-end
-
-def winning_team
-  scores = { 'Brooklyn Nets' => 0, 'Charlotte Hornets' => 0 }
-  game_hash.each do |_team, game_data|
-    game_data[:players].each do |player|
-      scores[game_data[:team_name]] += iterate_through_players_for(player[:player_name], :points)
-    end
-  end
-  scores.max_by { |_k, v| v }.first
-end
-
-def player_with_longest_name
-  player_with_most_of(:player_name)
-end
-
-# # Super Bonus Question
-def long_name_steals_a_ton?
-  player_with_most_of(:steals) == player_with_most_of(:player_name)
+  rebounds
 end
